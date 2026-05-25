@@ -3,16 +3,18 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ai-contained-provider-template"  # TODO: rename to ai-contained-provider-<yourprovider>
-version = "0.0.2"
-description = "Hello World adventure game provider for AI-Contained"  # TODO: update
+name = "ai-contained-provider-trust-client"
+version = "0.0.1"
+description = "Trust client provider for AI-Contained"
 requires-python = ">=3.12"
 dependencies = [
     "ai-contained-core-mcp @ https://github.com/AI-Contained/ai-contained-base/archive/refs/tags/v0.2.0.zip#subdirectory=packages/core-mcp",
+    "ai-contained-provider-trust-server-client @ https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/heads/main.zip#subdirectory=packages/client",
 ]
 
 [project.optional-dependencies]
 dev = [
+    "ai-contained-provider-trust-server-daemon @ https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/heads/main.zip#subdirectory=packages/daemon",
     "pytest>=8.0",
     "pytest-asyncio>=1.0",
     "pytest-describe>=3.1",
@@ -29,7 +31,7 @@ markers = [
 ]
 
 [project.entry-points."ai_contained.provider"]
-template = "ai_contained.provider.template:register"  # TODO: rename to <yourprovider> = "ai_contained.provider.<yourprovider>:register"
+trust_client = "ai_contained.provider.trust_client:register"
 
 [tool.ruff]
 line-length = 120
