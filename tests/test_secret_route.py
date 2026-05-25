@@ -1,9 +1,9 @@
 """End-to-end demonstration: trust client registers with a trust server and fetches an encrypted secret."""
 
-"""End-to-end demonstration: trust client registers with a trust server and fetches an encrypted secret."""
-
 import json
+from collections.abc import AsyncGenerator
 
+import httpx
 import pytest
 from assertpy import assert_that
 from fastmcp import FastMCP
@@ -34,6 +34,13 @@ def describe_secret_route() -> None:
             return JSONResponse(expected_secret)
 
         return server
+
+    @pytest.fixture
+    async def http(trust_server_mcp: FastMCP) -> AsyncGenerator[httpx.AsyncClient, None]:
+        # Route HTTP directly to the in-process trust server — no real network needed.
+        transport = httpx.ASGITransport(app=trust_server_mcp.http_app(), client=("127.0.0.1", 50000))
+        async with httpx.AsyncClient(transport=transport, base_url="http://ignored") as client:
+            yield client
 
     async def it_posts_a_payload_and_receives_the_expected_secret(
         mcp: FastMCP, monkeypatch: pytest.MonkeyPatch

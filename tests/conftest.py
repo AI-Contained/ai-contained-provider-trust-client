@@ -4,6 +4,7 @@ import httpx
 import pytest
 from fastmcp import FastMCP
 
+from ai_contained.trust import client as trust_client
 from ai_contained.trust import server as trust_server
 from ai_contained.trust.client.trust_config import reset_trust_config
 from ai_contained.trust.server.trust_store import get_trust_store
@@ -33,11 +34,14 @@ async def http(trust_server_mcp: FastMCP) -> AsyncGenerator[httpx.AsyncClient, N
 
 
 @pytest.fixture(autouse=True)
-def _patch_http_factory(http: httpx.AsyncClient, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(
-        "ai_contained.trust.client.trust_config._default_http_client_factory",
-        lambda url: http,
-    )
+def _patch_init_trust_config(http: httpx.AsyncClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    original = trust_client.init_trust_config
+
+    async def _patched(raw: str, factory=None) -> trust_client.TrustConfig:
+        return await original(raw, lambda url: http)
+
+    monkeypatch.setattr("ai_contained.trust.client.trust_config.init_trust_config", _patched)
+    monkeypatch.setattr("ai_contained.provider.trust_client.init_trust_config", _patched)
 
 
 @pytest.fixture
