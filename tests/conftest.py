@@ -20,9 +20,9 @@ def _reset() -> None:
 
 
 @pytest.fixture
-def trust_server_mcp() -> FastMCP:
+async def trust_server_mcp() -> FastMCP:
     server = FastMCP("trust-server")
-    trust_server.register(server)
+    await trust_server.register(server)
     return server
 
 
@@ -45,7 +45,7 @@ def _patch_init_trust_config(http: httpx.AsyncClient, monkeypatch: pytest.Monkey
 
 
 @pytest.fixture
-def mcp() -> FastMCP:
+async def mcp() -> FastMCP:
     server = FastMCP("test")
-    register(server)
+    await register(server)
     return server

@@ -20,10 +20,10 @@ def describe_secret_route() -> None:
     expected_secret = {"access_key": "AKIAIOSFODNN7EXAMPLE", "secret_key": "wJalrXUtnFEMI"}
 
     @pytest.fixture
-    def trust_server_mcp() -> FastMCP:
+    async def trust_server_mcp() -> FastMCP:
         server = FastMCP("trust-server")
         # register() wires up /trust/register — the key-exchange endpoint.
-        trust_server.register(server)
+        await trust_server.register(server)
 
         # secret_route() wraps a handler with signature verification + response encryption.
         # In production this would return real credentials (e.g. from AWS STS).
