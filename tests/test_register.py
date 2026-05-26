@@ -3,8 +3,8 @@ import pytest
 from assertpy import assert_that
 from fastmcp import FastMCP
 
-from ai_contained.trust import client as trust_client
 from ai_contained.provider.trust_client import register
+from ai_contained.trust import client as trust_client
 
 
 def describe_register() -> None:

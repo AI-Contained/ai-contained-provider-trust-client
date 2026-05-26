@@ -5,13 +5,13 @@ import json
 import httpx
 import pytest
 from assertpy import assert_that
+from conftest import AwsSecretHandler
 from fastmcp import FastMCP
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from ai_contained.trust import client as trust_client
 from ai_contained.provider.trust_client import register
-from conftest import AwsSecretHandler
+from ai_contained.trust import client as trust_client
 
 
 def describe_secret_route() -> None:
