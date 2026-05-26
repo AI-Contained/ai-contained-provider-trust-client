@@ -3,13 +3,20 @@ from collections.abc import AsyncGenerator
 import httpx
 import pytest
 from fastmcp import FastMCP
+from starlette.requests import Request
+from starlette.responses import Response
 
-from ai_contained.trust import client as trust_client
 from ai_contained.trust import server as trust_server
 from ai_contained.trust.client.trust_config import reset_trust_config
 from ai_contained.trust.server.trust_store import get_trust_store
 
-from ai_contained.provider.trust_client import register
+
+async def _raise_not_implemented(request: Request) -> Response:
+    raise NotImplementedError
+
+
+class AwsSecretHandler:
+    handle = _raise_not_implemented
 
 
 @pytest.fixture(autouse=True)
@@ -20,9 +27,19 @@ def _reset() -> None:
 
 
 @pytest.fixture
+def mcp() -> FastMCP:
+    return FastMCP("test")
+
+
+@pytest.fixture
 async def trust_server_mcp() -> FastMCP:
     server = FastMCP("trust-server")
     await trust_server.register(server)
+
+    @trust_server.secret_route(server, "aws")
+    async def aws_secret(request: Request) -> Response:
+        return await AwsSecretHandler.handle(request)
+
     return server
 
 
@@ -31,21 +48,3 @@ async def http(trust_server_mcp: FastMCP) -> AsyncGenerator[httpx.AsyncClient, N
     transport = httpx.ASGITransport(app=trust_server_mcp.http_app(), client=("127.0.0.1", 50000))
     async with httpx.AsyncClient(transport=transport, base_url="http://ignored") as client:
         yield client
-
-
-@pytest.fixture(autouse=True)
-def _patch_init_trust_config(http: httpx.AsyncClient, monkeypatch: pytest.MonkeyPatch) -> None:
-    original = trust_client.init_trust_config
-
-    async def _patched(raw: str, factory=None) -> trust_client.TrustConfig:
-        return await original(raw, lambda url: http)
-
-    monkeypatch.setattr("ai_contained.trust.client.trust_config.init_trust_config", _patched)
-    monkeypatch.setattr("ai_contained.provider.trust_client.init_trust_config", _patched)
-
-
-@pytest.fixture
-async def mcp() -> FastMCP:
-    server = FastMCP("test")
-    await register(server)
-    return server
