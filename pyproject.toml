@@ -4,17 +4,24 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ai-contained-provider-trust-client"
-version = "1.1.1"
+version = "1.2.0"
 description = "Trust client provider for AI-Contained"
 requires-python = ">=3.12"
 dependencies = [
-    "ai-contained-core-mcp @ https://github.com/AI-Contained/ai-contained-base/archive/refs/tags/v0.3.1.zip#subdirectory=packages/core-mcp",
-    "ai-contained-provider-trust-server-client @ https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/heads/main.zip#subdirectory=packages/client",
+    "ai-contained-core-mcp>=0.4.0",
+    "ai-contained-provider-trust-server-client>=1.1.0",
 ]
+
+# Fallback sources — only consulted when nothing else already satisfies the name in
+# the current resolve (e.g. a sibling /opt/ directory in a monolithic image build).
+[tool.uv.sources]
+ai-contained-core-mcp = { url = "https://github.com/AI-Contained/ai-contained-base/archive/refs/tags/v0.4.0.zip", subdirectory = "packages/core-mcp" }
+ai-contained-provider-trust-server-client = { url = "https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/tags/v1.1.0.zip", subdirectory = "packages/client" }
+ai-contained-provider-trust-server-daemon = { url = "https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/tags/v1.1.0.zip", subdirectory = "packages/daemon" }
 
 [project.optional-dependencies]
 dev = [
-    "ai-contained-provider-trust-server-daemon @ https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/heads/main.zip#subdirectory=packages/daemon",
+    "ai-contained-provider-trust-server-daemon>=1.1.0",
     "pytest>=8.0",
     "pytest-asyncio>=1.0",
     "pytest-describe>=3.1",
@@ -32,7 +39,7 @@ markers = [
 ]
 
 [project.entry-points."ai_contained.provider"]
-trust_client = "ai_contained.provider.trust_client:register"
+trust_client = "ai_contained.provider.trust_client:provide"
 
 [tool.ruff]
 line-length = 120
