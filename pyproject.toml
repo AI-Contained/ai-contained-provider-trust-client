@@ -13,11 +13,11 @@ dependencies = [
 ]
 
 # Fallback sources — only consulted when nothing else already satisfies the name in
-# the current resolve. TODO: move to tags once the branches are released.
+# the current resolve (e.g. a sibling /opt/ directory in a monolithic image build).
 [tool.uv.sources]
-ai-contained-core-mcp = { url = "https://github.com/AI-Contained/ai-contained-base/archive/refs/heads/kill-singletons.zip", subdirectory = "packages/core-mcp" }
-ai-contained-provider-trust-server-client = { url = "https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/heads/kill-singletons.zip", subdirectory = "packages/client" }
-ai-contained-provider-trust-server-daemon = { url = "https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/heads/kill-singletons.zip", subdirectory = "packages/daemon" }
+ai-contained-core-mcp = { url = "https://github.com/AI-Contained/ai-contained-base/archive/refs/tags/v0.4.0.zip", subdirectory = "packages/core-mcp" }
+ai-contained-provider-trust-server-client = { url = "https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/tags/v1.1.0.zip", subdirectory = "packages/client" }
+ai-contained-provider-trust-server-daemon = { url = "https://github.com/AI-Contained/ai-contained-provider-trust-server/archive/refs/tags/v1.1.0.zip", subdirectory = "packages/daemon" }
 
 [project.optional-dependencies]
 dev = [
